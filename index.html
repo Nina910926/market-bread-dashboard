@@ -1,0 +1,25 @@
+<script>
+// 页面加载自动请求后端接口
+async function loadLatestQuote(){
+  try{
+    const resp = await fetch("/api/fetchQuote");
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error);
+    // 自动填充第一页当日收盘页面
+    fillTodayPanel(data);
+    // 自动存入localStorage历史记录
+    autoSaveRecord(data);
+  }catch(err){
+    alert("自动获取行情失败，切换为手动录入模式："+err.message);
+    showManualInput();
+  }
+}
+
+// 页面初始化
+window.onload = function(){
+  initTabUi();
+  loadLatestQuote(); //打开页面立刻自动拉当日收盘数据
+  renderHistoryTable();
+  renderCharts();
+}
+</script>
